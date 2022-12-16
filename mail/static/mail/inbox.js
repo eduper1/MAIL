@@ -55,4 +55,5 @@ function send_mail(event) {
     load_mailbox('sent')
     console.log(result);
   });
+  return false;
 }

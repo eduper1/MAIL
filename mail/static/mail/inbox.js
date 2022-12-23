@@ -46,12 +46,13 @@ function load_mailbox(mailbox) {
       // element.addEventListener('click', function() {
       // console.log('This element has been clicked!')
       // });
-      document.querySelector('body').append(element);
+      document.querySelector('#emails-view').append(element);
     });
 
 
 
   });
+  return false;
 }
 
 function send_mail(event) {

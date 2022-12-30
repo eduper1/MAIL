@@ -23,6 +23,7 @@ function compose_email() {
   document.querySelector('#compose-body').value = '';
 }
 
+// function to display all emails in a mailbox
 function load_mailbox(mailbox) {
   
   // Show the mailbox and hide other views
@@ -36,17 +37,24 @@ function load_mailbox(mailbox) {
   .then(response => response.json())
   .then(emails => {
     // print emails
-    console.log(emails);
+    // console.log(emails);
     emails.forEach(email => {
-      console.log(email.sender, email.subject, email.timestamp)
+      // console.log(email.sender, email.subject, email.timestamp)
       // Display message on the screen
       // document.querySelector('#emails-view').innerHTML = `Sender: ${email.sender}; subject: ${email.subject}; Timestamp: ${email.timestamp}`;
-      const element = document.createElement('div');
-      element.innerHTML = `Sender: ${email.sender}; subject: ${email.subject}; Timestamp: ${email.timestamp}`;
+      const elementDiv = document.createElement('div');
+      elementDiv.setAttribute('id', 'msg');
+      elementDiv.style.backgroundColor = "#ffffff";
+      
+      const elementA = document.createElement('a');
+      elementA.innerHTML = `Sender: ${email.sender}; subject: ${email.subject}; Timestamp: ${email.timestamp}`;
+      elementA.setAttribute('href', '#');
+      elementA.addEventListener('click', displayMail(email.id));
       // element.addEventListener('click', function() {
-      // console.log('This element has been clicked!')
-      // });
-      document.querySelector('#emails-view').append(element);
+        // console.log('This element has been clicked!')
+        // });
+      elementDiv.appendChild(elementA);
+      document.querySelector('#emails-view').append(elementDiv);
     });
 
 
@@ -55,6 +63,22 @@ function load_mailbox(mailbox) {
   return false;
 }
 
+// function to display an email's body
+function displayMail(email_id){
+  fetch(`/emails/${email_id}`)
+  .then(response => response.json())
+  .then(email => {
+    console.log(email);
+    // display each email
+    const display = document.createElement('div');
+    display.innerHTML = `id: ${email.id}, body: ${email.body}`;
+    document.querySelector('#emails-view').append(display);
+  });
+}
+
+// console.log(displayMail());
+
+// function to send emails
 function send_mail(event) {
   event.preventDefault();
   console.log("hello");

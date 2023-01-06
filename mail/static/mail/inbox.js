@@ -40,14 +40,7 @@ function displayMail(email_id){
     // const display = document.createElement('p');
     document.querySelector('#email-view').innerHTML = `id: ${email.id}, body: ${email.body}`;
     // document.querySelector('#email-view').append(display);
-    if (!email.read){
-      fetch(`/emails/${email_id}`, {
-        method: 'PUT',
-        body: JSON.stringify({
-        read: true
-    })
-  })
-    }
+    
   });
 
 }
@@ -73,11 +66,22 @@ function load_mailbox(mailbox) {
       // Display message on the screen
       const elementDiv = document.createElement('div');
       // elementDiv.setAttribute('id', 'msg');
-      elementDiv.style.backgroundColor = "#ffffff";
+      // elementDiv.style.backgroundColor = "red";
+      if(email.read){
+        elementDiv.style.backgroundColor = "lightGrey"
+      }
       
       elementDiv.innerHTML = `Sender: ${email.sender}; subject: ${email.subject}; Timestamp: ${email.timestamp}`;
       elementDiv.addEventListener('click', () =>{
         console.log('This element is clicked');
+        if (!email.read){
+          fetch(`/emails/${email.id}`, {
+            method: 'PUT',
+           body: JSON.stringify({
+           read: true
+    })
+  })
+    }
         displayMail(email.id);
       });
       document.querySelector('#emails-view').append(elementDiv);

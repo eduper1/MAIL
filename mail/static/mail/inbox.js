@@ -40,7 +40,16 @@ function displayMail(email_id){
     // const display = document.createElement('p');
     document.querySelector('#email-view').innerHTML = `id: ${email.id}, body: ${email.body}`;
     // document.querySelector('#email-view').append(display);
+    if (!email.read){
+      fetch(`/emails/${email_id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+        read: true
+    })
+  })
+    }
   });
+
 }
 
 // function to display all emails in a mailbox

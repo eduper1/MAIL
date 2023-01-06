@@ -66,7 +66,10 @@ function load_mailbox(mailbox) {
       // Display message on the screen
       const elementDiv = document.createElement('div');
       // elementDiv.setAttribute('id', 'msg');
-      // elementDiv.style.backgroundColor = "red";
+      elementDiv.style.borderStyle = 'solid';
+      elementDiv.style.borderColor = 'black';
+      elementDiv.style.borderWidth = '1px';
+      elementDiv.style.marginBottom = '4px';
       if(email.read){
         elementDiv.style.backgroundColor = "lightGrey"
       }

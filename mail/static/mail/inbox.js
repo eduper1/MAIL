@@ -36,11 +36,49 @@ function displayMail(email_id){
     document.querySelector('#emails-view').style.display = 'none';
     document.querySelector('#compose-view').style.display = 'none';
     
+  
+
     // display each email
     // const display = document.createElement('p');
-    document.querySelector('#email-view').innerHTML = `id: ${email.id}, body: ${email.body}`;
-    // document.querySelector('#email-view').append(display);
+    document.querySelector('#email-view').innerHTML = `
+    <p style='display:block;'><b><span>From: </span></b> ${email.sender}</p>
+    <p style='display:block;'><b><span>To: </span></b> ${email.recipients}</p>
+    <p style='display:block;'><b><span>Subject: </span></b> ${email.subject}</p>
+    <p style='display:block;'><b><span>Body: </span></b> ${email.body}</p>
+    <p style='display:block;'><b><span>Timestamp</span></b> ${email.timestamp}</p>
+    <div>
+      <button id='archive'>${email.archived ? "Unarchive":"Archive"}</button>
+    </div>
+    `;
     
+    // add event listener
+    document.querySelector('#archive').addEventListener('click', ()=>{
+      console.log('btn clicked')
+      if (!email.archived){
+        fetch(`/emails/${email.id}`, {
+          method: 'PUT',
+         body: JSON.stringify({
+         archived: true
+        })
+      })
+      .then(() => load_mailbox('inbox'))
+    }else{
+      fetch(`/emails/${email.id}`, {
+        method: 'PUT',
+       body: JSON.stringify({
+       archived: false
+      })
+    })
+    .then(() => load_mailbox('inbox'))
+    }
+
+
+
+      fetch(`/email/${email.id}`,{
+        method: 'PUT',
+        body: JSON.stringify({archived: !email.archived})
+      })
+    })
   });
 
 }
@@ -70,6 +108,7 @@ function load_mailbox(mailbox) {
       elementDiv.style.borderColor = 'black';
       elementDiv.style.borderWidth = '1px';
       elementDiv.style.marginBottom = '4px';
+      elementDiv.style.cursor = 'pointer';
       if(email.read){
         elementDiv.style.backgroundColor = "lightGrey"
       }

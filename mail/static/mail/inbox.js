@@ -48,9 +48,22 @@ function displayMail(email_id){
     <p style='display:block;'><b><span>Timestamp</span></b> ${email.timestamp}</p>
     <div>
       <button id='archive'>${email.archived ? "Unarchive":"Archive"}</button>
+      <button id='reply'>Reply</button>
     </div>
     `;
     
+    // reply function
+    document.querySelector('#reply').addEventListener('click', ()=>{
+      compose_email();
+      document.querySelector('#compose-recipients').value = email.sender;
+      if (email.subject.search('Re:')){
+        document.querySelector('#compose-subject').value = (email.subject);
+      }else{
+        document.querySelector('#compose-subject').value = `Re: $(email.subject)`;
+      }
+      document.querySelector('#compose-body').value = `On ${email.timestamp} ${email.sender} wrote: ${email.body}`;
+    })
+
     // add event listener
     document.querySelector('#archive').addEventListener('click', ()=>{
       console.log('btn clicked')
@@ -72,12 +85,6 @@ function displayMail(email_id){
     .then(() => load_mailbox('inbox'))
     }
 
-
-
-      fetch(`/email/${email.id}`,{
-        method: 'PUT',
-        body: JSON.stringify({archived: !email.archived})
-      })
     })
   });
 

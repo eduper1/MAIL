@@ -54,13 +54,6 @@ function displayMail(email_id, mailbox){
 
     if (mailbox === "sent"){
       const btns = document.querySelector('.email-btn').style.display = 'none';
-      // console.log(btns.children);
-      // for (const btn = 0; btn < btns.length; btn++){
-      //   btns[btn].style.display = 'none';
-      // }
-      // btn.forEach(element => {
-      //   element.style.display = 'None';
-      // });
     }
     
     // reply function

@@ -26,7 +26,7 @@ function compose_email() {
 
 
 // function to display an email's body
-function displayMail(email_id){
+function displayMail(email_id, mailbox){
   fetch(`/emails/${email_id}`)
   .then(response => response.json())
   .then(email => {
@@ -46,11 +46,22 @@ function displayMail(email_id){
     <p style='display:block;'><b><span>Subject: </span></b> ${email.subject}</p>
     <p style='display:block;'><b><span>Body: </span></b> ${email.body}</p>
     <p style='display:block;'><b><span>Timestamp</span></b> ${email.timestamp}</p>
-    <div>
-      <button id='archive'>${email.archived ? "Unarchive":"Archive"}</button>
-      <button id='reply'>Reply</button>
+    <div class='email-btn'>
+    <button id='archive'>${email.archived ? "Unarchive":"Archive"}</button>
+    <button id='reply'>Reply</button>
     </div>
     `;
+
+    if (mailbox === "sent"){
+      const btns = document.querySelector('.email-btn').style.display = 'none';
+      // console.log(btns.children);
+      // for (const btn = 0; btn < btns.length; btn++){
+      //   btns[btn].style.display = 'none';
+      // }
+      // btn.forEach(element => {
+      //   element.style.display = 'None';
+      // });
+    }
     
     // reply function
     document.querySelector('#reply').addEventListener('click', ()=>{
@@ -131,7 +142,7 @@ function load_mailbox(mailbox) {
     })
   })
     }
-        displayMail(email.id);
+        displayMail(email.id, mailbox);
       });
       document.querySelector('#emails-view').append(elementDiv);
     });

@@ -26,7 +26,7 @@ function compose_email() {
 
 
 // function to display an email's body
-function displayMail(email_id){
+function displayMail(email_id, mailbox){
   fetch(`/emails/${email_id}`)
   .then(response => response.json())
   .then(email => {
@@ -41,30 +41,34 @@ function displayMail(email_id){
     // display each email
     // const display = document.createElement('p');
     document.querySelector('#email-view').innerHTML = `
-    <p style='display:block;'><b><span>From: </span></b> ${email.sender}</p>
+    <p style='display:block;'><b><span>Sent by: </span></b> ${email.sender}</p>
     <p style='display:block;'><b><span>To: </span></b> ${email.recipients}</p>
     <p style='display:block;'><b><span>Subject: </span></b> ${email.subject}</p>
     <p style='display:block;'><b><span>Body: </span></b> ${email.body}</p>
     <p style='display:block;'><b><span>Timestamp</span></b> ${email.timestamp}</p>
-    <div>
-      <button id='archive'>${email.archived ? "Unarchive":"Archive"}</button>
-      <button id='reply'>Reply</button>
+    <div class='email-btn'>
+    <button id='archive'>${email.archived ? "Unarchive":"Archive"}</button>
+    <button id='reply'>Reply</button>
     </div>
     `;
+
+    if (mailbox === "sent"){
+      const btns = document.querySelector('.email-btn').style.display = 'none';
+    }
     
     // reply function
     document.querySelector('#reply').addEventListener('click', ()=>{
       compose_email();
       document.querySelector('#compose-recipients').value = email.sender;
-      if (email.subject.search('Re:')){
-        document.querySelector('#compose-subject').value = (email.subject);
+      if (email['subject'].match(/Re:/i)){
+        document.querySelector('#compose-subject').value = email.subject;
       }else{
-        document.querySelector('#compose-subject').value = `Re: $(email.subject)`;
+        document.querySelector('#compose-subject').value = `Re: ${email.subject}`;
       }
-      document.querySelector('#compose-body').value = `On ${email.timestamp} ${email.sender} wrote: ${email.body}`;
+      document.querySelector('#compose-body').value = `On ${email.timestamp} ${email.sender} wrote: ${email.body}\n\n`;
     })
 
-    // add event listener
+    // add event listener to archive button
     document.querySelector('#archive').addEventListener('click', ()=>{
       console.log('btn clicked')
       if (!email.archived){
@@ -131,7 +135,7 @@ function load_mailbox(mailbox) {
     })
   })
     }
-        displayMail(email.id);
+        displayMail(email.id, mailbox);
       });
       document.querySelector('#emails-view').append(elementDiv);
     });

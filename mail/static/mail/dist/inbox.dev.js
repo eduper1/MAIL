@@ -29,7 +29,7 @@ function compose_email() {
 } // function to display an email's body
 
 
-function displayMail(email_id) {
+function displayMail(email_id, mailbox) {
   fetch("/emails/".concat(email_id)).then(function (response) {
     return response.json();
   }).then(function (email) {
@@ -40,20 +40,25 @@ function displayMail(email_id) {
     document.querySelector('#compose-view').style.display = 'none'; // display each email
     // const display = document.createElement('p');
 
-    document.querySelector('#email-view').innerHTML = "\n    <p style='display:block;'><b><span>From: </span></b> ".concat(email.sender, "</p>\n    <p style='display:block;'><b><span>To: </span></b> ").concat(email.recipients, "</p>\n    <p style='display:block;'><b><span>Subject: </span></b> ").concat(email.subject, "</p>\n    <p style='display:block;'><b><span>Body: </span></b> ").concat(email.body, "</p>\n    <p style='display:block;'><b><span>Timestamp</span></b> ").concat(email.timestamp, "</p>\n    <div>\n      <button id='archive'>").concat(email.archived ? "Unarchive" : "Archive", "</button>\n      <button id='reply'>Reply</button>\n    </div>\n    "); // reply function
+    document.querySelector('#email-view').innerHTML = "\n    <p style='display:block;'><b><span>Sent by: </span></b> ".concat(email.sender, "</p>\n    <p style='display:block;'><b><span>To: </span></b> ").concat(email.recipients, "</p>\n    <p style='display:block;'><b><span>Subject: </span></b> ").concat(email.subject, "</p>\n    <p style='display:block;'><b><span>Body: </span></b> ").concat(email.body, "</p>\n    <p style='display:block;'><b><span>Timestamp</span></b> ").concat(email.timestamp, "</p>\n    <div class='email-btn'>\n    <button id='archive'>").concat(email.archived ? "Unarchive" : "Archive", "</button>\n    <button id='reply'>Reply</button>\n    </div>\n    ");
+
+    if (mailbox === "sent") {
+      var btns = document.querySelector('.email-btn').style.display = 'none';
+    } // reply function
+
 
     document.querySelector('#reply').addEventListener('click', function () {
       compose_email();
       document.querySelector('#compose-recipients').value = email.sender;
 
-      if (email.subject.search('Re:')) {
+      if (email['subject'].match(/Re:/i)) {
         document.querySelector('#compose-subject').value = email.subject;
       } else {
-        document.querySelector('#compose-subject').value = "Re: $(email.subject)";
+        document.querySelector('#compose-subject').value = "Re: ".concat(email.subject);
       }
 
-      document.querySelector('#compose-body').value = "On ".concat(email.timestamp, " ").concat(email.sender, " wrote: ").concat(email.body);
-    }); // add event listener
+      document.querySelector('#compose-body').value = "On ".concat(email.timestamp, " ").concat(email.sender, " wrote: ").concat(email.body, "\n\n");
+    }); // add event listener to archive button
 
     document.querySelector('#archive').addEventListener('click', function () {
       console.log('btn clicked');
@@ -122,7 +127,7 @@ function load_mailbox(mailbox) {
           });
         }
 
-        displayMail(email.id);
+        displayMail(email.id, mailbox);
       });
       document.querySelector('#emails-view').append(elementDiv);
     });
